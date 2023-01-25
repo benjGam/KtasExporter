@@ -81,11 +81,11 @@ def run():
   get_katas(); 
   i = len(gvars.already_pushed_katas) - int(push_step) + 1; 
   for kata in gvars.completed_katas:
-    toWrite = "# " + kata.name + " ||| #" + str(i) + ' [' + kata.level + ']\n' + '```js\n' + kata.code + '\n```\n'; 
+    toWrite = "# " + kata.name + " #" + str(i) + ' [' + kata.level + ']\n' + '```js\n' + kata.code + '\n```\n'; 
     file_management.add_kata_in_file(local_repo_path, file_name, toWrite); 
     i += 1; 
     commit(); 
-  print('Vos ' + push_step + ' ont étés commités'); 
+  print('Vos ' + push_step + ' katas ont étés commités'); 
 
 
 run(); 

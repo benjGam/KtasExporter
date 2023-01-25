@@ -2,7 +2,9 @@ import os
 import platform
 import time
 import utils
+import file_management
 import gvars
+import subprocess 
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -22,8 +24,6 @@ local_repo_path = config.get('LOCAL_REPO_PATH');
 file_name = config.get('KATA_FILE_NAME'); 
 push_step = config.get('PUSH_STEP'); 
 
-total_completed_katas = 0; 
-completed_katas = []; 
 
 class Kata :
     def __init__(self, name, level, language, code):
@@ -68,20 +68,29 @@ def get_katas():
     kata_name = get_kata_name(solution.find_element(By.CLASS_NAME, 'item-title')); 
     kata_language = get_kata_language(solution.find_elements(By.CLASS_NAME, 'markdown')[0]); 
     kata_code = get_kata_code(solution.find_elements(By.CLASS_NAME, 'markdown')[0]); 
-    completed_katas.append(Kata(kata_name, kata_level, kata_language, kata_code)); 
+    if("kyu" in kata_level):
+      gvars.completed_katas.append(Kata(kata_name, kata_level, kata_language, kata_code)); 
   
-  for kata in completed_katas:
-    print(kata); 
-
+  gvars.completed_katas.reverse(); 
+  
+def commit():
+  bashCommand = 'cd ' + local_repo_path + ' && git add ' + file_name + ' && git commit -m "docs(common): add kata" && git push origin ' + branch; 
+  os.system(bashCommand); 
 
 def run(): 
+  file_management.read_kata_file(local_repo_path, file_name); 
   utils.start_browser_session(); 
   gvars.web_driver.get("https://www.codewars.com/users/sign_in"); 
   connection(); 
   gvars.web_driver.get('https://www.codewars.com/users/Mecopi/completed_solutions'); 
   load_page(); 
-  print('Fini'); 
-  # get_katas(); 
+  get_katas(); 
+  i = 1; 
 
+  for kata in gvars.completed_katas:
+    toWrite = "# " + kata.name + " #" + str(i) + ' [' + kata.level + ']\n' + '```js\n' + kata.code + '\n```\n'; 
+    file_management.add_kata_in_file(local_repo_path, file_name, toWrite); 
+    i += 1; 
+    commit(); 
 
 run(); 

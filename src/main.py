@@ -4,7 +4,6 @@ import time
 import utils
 import file_management
 import gvars
-import subprocess 
 from Kata import Kata
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -15,7 +14,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service
 from dotenv import load_dotenv, dotenv_values
 
-load_dotenv()
+load_dotenv(); 
 
 config = dotenv_values(); 
 mail_address = config.get('MAIL_ADDRESS'); 

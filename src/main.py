@@ -52,6 +52,15 @@ def get_kata_level(element):
 def get_kata_language(element):
     return element.find_element(By.TAG_NAME, 'code').get_attribute('data-language').lower(); 
 
+def load_page(): 
+    while(True): 
+        try:
+          element = gvars.web_driver.find_element(By.CLASS_NAME, 'js-infinite-marker'); 
+          gvars.web_driver.execute_script("arguments[0].scrollIntoView();", element); 
+          time.sleep(0.7);  
+        except:
+          break;  
+
 def get_katas(): 
   solutions_divs = gvars.web_driver.find_elements(By.CLASS_NAME, "list-item-solutions"); 
   for solution in solutions_divs: 
@@ -70,6 +79,9 @@ def run():
   gvars.web_driver.get("https://www.codewars.com/users/sign_in"); 
   connection(); 
   gvars.web_driver.get('https://www.codewars.com/users/Mecopi/completed_solutions'); 
-  get_katas(); 
+  load_page(); 
+  print('Fini'); 
+  # get_katas(); 
+
 
 run(); 

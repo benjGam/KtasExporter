@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from Kata import Kata
 
 # Selenium utils
 
@@ -14,6 +15,7 @@ def start_browser_session():
     options = webdriver.ChromeOptions(); 
     options.add_argument("no-sandbox"); 
     options.add_argument("--disable-gpu"); 
+    options.add_argument('--headless'); 
     options.add_argument("--disable-dev-shm-usage"); 
     options.add_experimental_option("detach", True); 
     try:
@@ -76,31 +78,3 @@ def clear_console():
         os.system('clear'); 
     elif(platform.system() == 'Windows'): 
         os.system('cls'); 
-
-def define_configuration(text, key, default_value, possibilities={}, convert=False):
-    user_entry = input(text); 
-    if(user_entry == ''):
-        gvars.configuration[key] = default_value; 
-        return; 
-    for possibility in possibilities:
-        if(user_entry.lower() == possibility):
-            gvars.configuration[key] = user_entry; 
-            return; 
-        gvars.configuration[key] = default_value; 
-    else: 
-        if(convert):
-            try:
-                gvars.configuration[key] = type(default_value)(user_entry); 
-            except:
-                gvars.configuration[key] = default_value; 
-        else: 
-            gvars.configuration[key] = user_entry; 
-        
-def check_config_file():
-    for key in gvars.NORMAL_CONFIGURATION:
-        if(gvars.configuration[key] == None):
-            gvars.configuration[key] == gvars.NORMAL_CONFIGURATION[key]; 
-            continue; 
-        if(type(gvars.configuration[key]) != type(gvars.NORMAL_CONFIGURATION[key])): 
-            gvars.configuration[key] == gvars.NORMAL_CONFIGURATION[key]; 
-                

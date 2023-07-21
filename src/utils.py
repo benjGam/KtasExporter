@@ -8,6 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from Kata import Kata
+from selenium.webdriver.chrome.service import Service
 
 # Selenium utils
 
@@ -17,12 +18,13 @@ def start_browser_session():
     options.add_argument("--disable-gpu"); 
     options.add_argument('--headless'); 
     options.add_argument("--disable-dev-shm-usage"); 
-    options.add_experimental_option("detach", True); 
     try:
         if(platform.system() == 'Linux'):
-            gvars.web_driver = webdriver.Chrome(os.path.dirname(__file__) + "/chromedriver", options=options); 
+            service = Service(executable_path=os.path.dirname(__file__) + "/chromedriver")
+            gvars.web_driver = webdriver.Chrome(options, service); 
         elif(platform.system() == 'Windows'): 
-            gvars.web_driver = webdriver.Chrome(os.path.dirname(__file__) + "/chromedriver.exe", options=options); 
+            service = Service(executable_path=os.path.dirname(__file__) + "/chromedriver.exe")
+            gvars.web_driver = webdriver.Chrome(options, service); 
         else:
             return None; 
     except Exception as e:
@@ -56,20 +58,18 @@ def get_element_ByXPATH(toXPath):
 def wait_until_page_loaded(): 
     try: 
         while(not element_isHidden(get_element_ByXPATH('//div[@class="loading page fadeIn"]'))):
-            time.sleep(0.1); 
+            time.sleep(0.000001); 
     except: 
         pass; 
     try:
         while(not element_isHidden(get_element_ByXPATH('//div[@class="loading page"]'))):
-            time.sleep(0.1); 
+            time.sleep(0.000001); 
     except:
         pass; 
-    time.sleep(0.5); 
 
 def wait_until_element_become_interactable(element):
     while(not element_isInteractable(element)):
-        time.sleep(0.1); 
-    time.sleep(0.5); 
+        time.sleep(0.001); 
 
 # Bots utils
 

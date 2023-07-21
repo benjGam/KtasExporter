@@ -50,6 +50,12 @@ def load_page():
       except:
         return False; 
 
+def save_kata(kata):
+   i = len(gvars.already_pushed_katas) - int(push_step) + 1; 
+   toWrite = "# " + kata.name + " #" + str(i) + ' [' + kata.level + ']\n' + '```js\n' + kata.code + '\n```\n'; 
+   file_management.add_kata_in_file(local_repo_path, file_name, toWrite); 
+   commit(); 
+
 def get_katas(): 
   global actual_getted_katas; 
   solutions_divs = gvars.web_driver.find_elements(By.CLASS_NAME, "list-item-solutions"); 
@@ -62,14 +68,16 @@ def get_katas():
       kata_language = get_kata_language(solution.find_elements(By.CLASS_NAME, 'markdown')[0]); 
       kata_code = get_kata_code(solution.find_elements(By.CLASS_NAME, 'markdown')[0]); 
       if("kyu" in kata_level):
-        gvars.completed_katas.append(Kata(kata_name, kata_level, kata_language, kata_code)); 
+        kata = Kata(kata_name, kata_level, kata_language, kata_code); 
+        gvars.completed_katas.append(kata); 
         gvars.already_pushed_katas.append(kata_name); 
         actual_getted_katas += 1; 
+        save_kata(kata); 
   if(load_page() == True):
     get_katas(); 
 
 def commit():
-  bashCommand = 'cd ' + local_repo_path + ' && git add ' + file_name + ' && git commit -m "docs(common): add kata"'; 
+  bashCommand = 'cd ' + local_repo_path + ' && git add . && git commit -m "docs(common): add kata"'; 
   os.system(bashCommand); 
 
 def run(): 
@@ -79,13 +87,4 @@ def run():
   connection(); 
   gvars.web_driver.get('https://www.codewars.com/users/Mecopi/completed_solutions'); 
   get_katas(); 
-  i = len(gvars.already_pushed_katas) - int(push_step) + 1; 
-  for kata in gvars.completed_katas:
-    toWrite = "# " + kata.name + " #" + str(i) + ' [' + kata.level + ']\n' + '```js\n' + kata.code + '\n```\n'; 
-    file_management.add_kata_in_file(local_repo_path, file_name, toWrite); 
-    i += 1; 
-    commit(); 
-  print('Vos ' + push_step + ' katas ont étés commités'); 
-
-
 run(); 

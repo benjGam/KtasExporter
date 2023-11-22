@@ -21,6 +21,7 @@ mail_address = config.get('MAIL_ADDRESS');
 password = config.get('PASSWORD'); 
 local_repo_path = config.get('LOCAL_REPO_PATH'); 
 file_name = config.get('KATA_FILE_NAME'); 
+username = config.get('USERNAME'); 
 push_step = config.get('PUSH_STEP'); 
 actual_getted_katas = 0; 
 
@@ -85,6 +86,6 @@ def run():
   utils.start_browser_session(); 
   gvars.web_driver.get("https://www.codewars.com/users/sign_in"); 
   connection(); 
-  gvars.web_driver.get('https://www.codewars.com/users/Mecopi/completed_solutions'); 
+  gvars.web_driver.get('https://www.codewars.com/users/' + username + '/completed_solutions'); 
   get_katas(); 
 run(); 

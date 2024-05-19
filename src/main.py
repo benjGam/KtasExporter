@@ -85,7 +85,9 @@ def run():
   file_management.read_kata_file(local_repo_path, file_name); 
   utils.start_browser_session(); 
   gvars.web_driver.get("https://www.codewars.com/users/sign_in"); 
+  print("Connecting to your Codewars account."); 
   connection(); 
   gvars.web_driver.get('https://www.codewars.com/users/' + username + '/completed_solutions'); 
+  print("Getting completed katas."); 
   get_katas(); 
 run(); 

@@ -55,7 +55,7 @@ def save_kata(kata):
    i = len(gvars.already_pushed_katas) - int(push_step) + 1; 
    toWrite = "# " + kata.name + " #" + str(i) + ' [' + kata.level + ']\n' + '```js\n' + kata.code + '\n```\n'; 
    file_management.add_kata_in_file(local_repo_path, file_name, toWrite); 
-   commit(); 
+   commit(kata.name); 
 
 def get_katas(): 
   global actual_getted_katas; 
@@ -77,8 +77,8 @@ def get_katas():
   if(load_page() == True):
     get_katas(); 
 
-def commit():
-  bashCommand = 'cd ' + local_repo_path + ' && git add . && git commit -m "docs(common): add kata"'; 
+def commit(kata_name):
+  bashCommand = 'cd ' + local_repo_path + ' && git add . && git commit -m "docs(common): add \'' + kata_name + '\' kata"'; 
   os.system(bashCommand); 
 
 def run(): 

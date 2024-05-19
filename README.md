@@ -4,9 +4,7 @@ KtasExporter is little Python script to add your katas (Codewars) easily.
 
 ## Requires
 
-- Python 3.10.9 (build on this version)
-- Selenium (pip install -U selenium)
-- DotEnv (pip install python-dotenv)
+- Python 3
 
 ## How to use
 
@@ -16,9 +14,7 @@ git clone git@github.com:benjGam/KtasExporter.git
 
 - Rename .env_exemple by .env
 - Set values in .env
-
-```sh
-python3 main.py
-```
+- Run `setup.sh`.
+- Run `run.sh`.
 
 Script will commit properly for you, and you'll have to push.

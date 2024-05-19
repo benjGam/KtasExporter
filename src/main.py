@@ -53,7 +53,7 @@ def load_page():
 
 def save_kata(kata):
    i = len(gvars.already_pushed_katas) - int(push_step) + 1; 
-   toWrite = "# " + kata.name + " #" + str(i) + ' [' + kata.level + ']\n' + '```js\n' + kata.code + '\n```\n\n'; 
+   toWrite = "# " + "#" + str(i) + " " + kata.name + ' [' + kata.level + ']\n\n' + '```js\n' + kata.code + '\n```\n\n'; 
    file_management.add_kata_in_file(local_repo_path, file_name, toWrite); 
    commit(kata.name); 
 

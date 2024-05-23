@@ -19,14 +19,12 @@ def start_browser_session():
     options.add_argument('--headless'); 
     options.add_argument("--disable-dev-shm-usage"); 
     try:
-        if(platform.system() == 'Linux'):
+        if(platform.system() == 'Windows'):
             service = Service(executable_path=os.path.dirname(__file__) + "/chromedriver")
             gvars.web_driver = webdriver.Chrome(options, service); 
-        elif(platform.system() == 'Windows'): 
+        else:
             service = Service(executable_path=os.path.dirname(__file__) + "/chromedriver.exe")
             gvars.web_driver = webdriver.Chrome(options, service); 
-        else:
-            return None; 
     except Exception as e:
         print('Une erreur est survenue, verifiez que les drivers Chrome sont bien présents dans le dossier'); 
         print('Ou assurez-vous de l\'installation de Chrome.'); 

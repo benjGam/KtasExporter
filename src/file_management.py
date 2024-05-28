@@ -13,7 +13,7 @@ def read_kata_file(repo_path, file_name):
         content = f.readlines();  
         for line in content: 
             if(line[0] == '#' and "kyu" in line.lower()):
-                kata_title = line[1:line.rfind('#')].strip(); 
+                kata_title = line[1:line.rfind('#')].strip().split("[")[0].strip(); 
                 gvars.already_pushed_katas.append(kata_title);  
     except Exception as e:
         print(e); 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-FOLDER_PATH=`dirname ${0}`
+FOLDER_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 python -m venv $FOLDER_PATH/venv/
 
@@ -12,7 +12,7 @@ python -m venv $FOLDER_PATH/venv/
 
 if [ -f "$HOME/.zshrc" ]; then
   echo "
-alias ktasexport='`pwd`/run.sh'" >> "$HOME/.zshrc"
+alias ktasexport='$FOLDER_PATH/run.sh'" >> "$HOME/.zshrc"
 fi
 
 alias pip="$FOLDER_PATH/venv/bin/pip"

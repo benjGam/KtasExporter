@@ -45,10 +45,11 @@ pip install -U selenium
 pip install -U python-dotenv
 pip install -U bs4
 
-echo "Do you want to add the 'ktasexport' alias to your shell config? (Y/n)"
-read ADD_ALIAS
+printf "Do you want to add the 'ktasexport' alias to your shell config? [Y/n] "
+read -n 1 -s -r response
+echo # New line after response
 
-if [ "$ADD_ALIAS" = "n" ] || [ "$ADD_ALIAS" = "N" ]; then
+if [ "$response" = "n" ] || [ "$response" = "N" ]; then
     exit 0
 fi
 

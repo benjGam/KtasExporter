@@ -2,7 +2,7 @@ import os
 import logging
 from typing import Dict, Optional
 from dotenv import load_dotenv, dotenv_values
-from .exceptions import ConfigurationError
+from auth.exceptions import ConfigurationError
 
 logger = logging.getLogger(__name__)
 

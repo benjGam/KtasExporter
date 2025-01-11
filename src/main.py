@@ -14,12 +14,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from config import Configuration
+from auth.exceptions import ConfigurationError
 from auth import (
-    Configuration,
     Credentials,
     CredentialsValidator,
     AuthenticationError,
-    ConfigurationError,
     ValidationError
 )
 

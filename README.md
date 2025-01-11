@@ -22,9 +22,8 @@ cd KtasExporter
   ./setup.sh
   ```
 - For Windows:
-  ```bash
-  python -m venv venv
-  ./venv/Scripts/pip install -U selenium python-dotenv bs4
+  ```cmd
+  setup.bat
   ```
 
 3. Configure your environment:
@@ -52,10 +51,15 @@ After installation, you can use the tool in two ways:
    ```
 
 ### Windows
-Run the tool using:
-```bash
-windows.bat
-```
+After installation, you can use the tool in two ways:
+1. Using the command (requires terminal restart after installation):
+   ```cmd
+   ktasexport
+   ```
+2. Using the run script directly:
+   ```cmd
+   run.bat
+   ```
 
 ## Disclaimer
 

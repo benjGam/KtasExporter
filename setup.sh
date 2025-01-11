@@ -29,26 +29,23 @@ add_alias_to_shell_config() {
     return 0
 }
 
-# Function to check and create directory if needed
-ensure_directory() {
-    local dir_path="$HOME/$1"
-    if [ ! -d "$dir_path" ]; then
-        mkdir -p "$dir_path"
-    fi
-}
+# Create virtual environment if it doesn't exist
+if [ ! -d "$FOLDER_PATH/venv" ]; then
+    echo "Creating virtual environment..."
+    python -m venv "$FOLDER_PATH/venv/"
+fi
 
-python -m venv "$FOLDER_PATH/venv/"
-
+# Install dependencies
+echo "Installing dependencies..."
 alias pip="$FOLDER_PATH/venv/bin/pip"
+pip install -U selenium python-dotenv bs4
 
-pip install -U selenium
-pip install -U python-dotenv
-pip install -U bs4
+# Ask for alias creation
+printf "\nDo you want to add the 'ktasexport' alias to your shell config? [Y/n] "
+read -n 1 -s -r response
+echo # New line after response
 
-echo "Do you want to add the 'ktasexport' alias to your shell config? (Y/n)"
-read ADD_ALIAS
-
-if [ "$ADD_ALIAS" = "n" ] || [ "$ADD_ALIAS" = "N" ]; then
+if [ "$response" = "n" ] || [ "$response" = "N" ]; then
     exit 0
 fi
 

@@ -63,3 +63,6 @@ SHELL_CONFIGS=(
 for config in "${SHELL_CONFIGS[@]}"; do
     add_alias_to_shell_config "$config"
 done
+
+echo "To use the 'ktasexport' alias in this terminal session, please run:"
+echo "source ~/$( [ "$(basename "$SHELL")" = "fish" ] && echo ".config/fish/config.fish" || echo ".$(basename "$SHELL")rc" )"

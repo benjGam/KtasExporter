@@ -11,65 +11,74 @@ class ChromeVersion:
     
     @staticmethod
     def get_chrome_version() -> str:
-        """ 
-        Get installed Chrome version.
-        
-        Returns:
-            str: Chrome version (e.g., "94.0.4606.81")
-            
-        Raises:
-            VersionError: If Chrome version cannot be detected
-        """
+        """Get the version of the installed Chrome browser."""
         system = platform.system().lower()
         
-        try:
-            if system == "linux":
-                output = subprocess.check_output(["google-chrome", "--version"])
-                version = output.decode().strip().split()[-1]
-            elif system == "darwin":  # MacOS
-                output = subprocess.check_output(["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "--version"])
-                version = output.decode().strip().split()[-1]
-            elif system == "windows":
-                import winreg
-                key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Google\Chrome\BLBeacon")
-                version = winreg.QueryValueEx(key, "version")[0]
-            else:
-                raise VersionError(f"Unsupported operating system: {system}")
-                
-            if not ChromeVersion.VERSION_PATTERN.match(version):
-                raise VersionError(f"Invalid Chrome version format: {version}")
-                
-            return version
+        if system == "linux":
+            chrome_executables = [
+                'google-chrome',
+                'google-chrome-stable',
+                'chromium',
+                'chromium-browser'
+            ]
             
-        except (subprocess.CalledProcessError, FileNotFoundError, ImportError) as e:
-            raise VersionError(f"Failed to detect Chrome version: {str(e)}")
+            for executable in chrome_executables:
+                try:
+                    version = subprocess.check_output([executable, '--version'], 
+                                                    stderr=subprocess.DEVNULL)
+                    version = version.decode('utf-8')
+                    match = re.search(ChromeVersion.VERSION_PATTERN, version)
+                    if match:
+                        return match.group(0)
+                except (subprocess.CalledProcessError, FileNotFoundError):
+                    continue
+                    
+            raise VersionError("Failed to detect Chrome version: Chrome not found")
+            
+        elif system == "darwin":
+            try:
+                process = subprocess.Popen(
+                    ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '--version'],
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                )
+                version = process.communicate()[0].decode('UTF-8')
+                match = re.search(ChromeVersion.VERSION_PATTERN, version)
+                if match:
+                    return match.group(0)
+                raise VersionError("Invalid Chrome version format")
+            except Exception as e:
+                raise VersionError(f"Failed to detect Chrome version: {str(e)}")
+                
+        elif system == "windows":
+            try:
+                import winreg
+                key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 
+                                   r'Software\Google\Chrome\BLBeacon')
+                version, _ = winreg.QueryValueEx(key, 'version')
+                match = re.search(ChromeVersion.VERSION_PATTERN, version)
+                if match:
+                    return match.group(0)
+                raise VersionError("Invalid Chrome version format")
+            except Exception as e:
+                raise VersionError(f"Failed to detect Chrome version: {str(e)}")
+                
+        raise VersionError(f"Unsupported operating system: {system}")
     
     @staticmethod
-    def get_major_version(version: str) -> str:
-        """
-        Extract major version number.
-        
-        Args:
-            version: Full version string
-            
-        Returns:
-            str: Major version number
-        """
-        match = ChromeVersion.VERSION_PATTERN.match(version)
-        if not match:
+    def get_major_version(version: str) -> int:
+        """Extract the major version number from a version string."""
+        try:
+            return int(version.split('.')[0])
+        except (IndexError, ValueError):
             raise VersionError(f"Invalid version format: {version}")
         return match.group(1)
     
     @staticmethod
     def is_compatible(chrome_version: str, driver_version: str) -> bool:
-        """
-        Check if ChromeDriver version is compatible with Chrome version.
-        
-        Args:
-            chrome_version: Chrome version
-            driver_version: ChromeDriver version
-            
-        Returns:
-            bool: True if versions are compatible
-        """
-        return ChromeVersion.get_major_version(chrome_version) == ChromeVersion.get_major_version(driver_version) 
+        """Check if ChromeDriver version is compatible with Chrome version."""
+        try:
+            chrome_major = ChromeVersion.get_major_version(chrome_version)
+            driver_major = ChromeVersion.get_major_version(driver_version)
+            return chrome_major == driver_major
+        except VersionError:
+            return False 

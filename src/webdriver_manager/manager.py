@@ -4,6 +4,7 @@ import logging
 import subprocess
 from typing import Optional
 from .exceptions import ChromeDriverError
+from .version import ChromeVersion
 
 logger = logging.getLogger(__name__)
 

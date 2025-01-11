@@ -19,7 +19,6 @@ cd KtasExporter
 2. Run the setup script:
 - For Linux/MacOS:
   ```bash
-  chmod +x setup.sh
   ./setup.sh
   ```
 - For Windows:

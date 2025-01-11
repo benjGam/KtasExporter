@@ -29,7 +29,7 @@ def start_browser_session():
         manager.update_if_needed()
         
         # Create service with managed ChromeDriver
-        service = Service(executable_path=manager.executable_path)
+        service = Service(executable_path=manager.driver_path)
         gvars.web_driver = webdriver.Chrome(options=options, service=service)
         logger.info("Browser session started successfully")
         

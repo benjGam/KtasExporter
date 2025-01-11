@@ -6,6 +6,7 @@ import shutil
 from typing import Optional
 from .exceptions import ChromeDriverError
 from .version import ChromeVersion
+from .system_utils import verify_npm_installation
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,9 @@ class ChromeDriverManager:
     def _download_driver(self) -> None:
         """Download ChromeDriver using npx."""
         try:
+            if not verify_npm_installation():
+                raise ChromeDriverError("npm is not installed")
+                
             chrome_version = ChromeVersion.get_chrome_version()
             major_version = ChromeVersion.get_major_version(chrome_version)
             

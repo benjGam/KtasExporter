@@ -1,5 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
-alias python="`dirname ${0}`/venv/bin/python3"
+# Get absolute path of script directory
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+VENV_PYTHON="$SCRIPT_DIR/venv/bin/python3"
 
-python "`dirname ${0}`/src/main.py"
+python "$SCRIPT_DIR/src/main.py"

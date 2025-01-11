@@ -10,7 +10,8 @@ VENV_PYTHON="$SCRIPT_DIR/venv/bin/python3"
 # Run setup if virtual environment doesn't exist
 if [ ! -f "$VENV_PYTHON" ]; then
     echo "Setting up environment..."
-    sh "$SCRIPT_DIR/setup.sh"
+    (sh "$SCRIPT_DIR/setup.sh")  # Execute in subshell
+    clear
 fi
 
 # Check if Python in virtual environment is executable

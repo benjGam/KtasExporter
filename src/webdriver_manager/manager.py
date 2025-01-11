@@ -2,6 +2,7 @@ import os
 import platform
 import logging
 import subprocess
+import shutil
 from typing import Optional
 from .exceptions import ChromeDriverError
 from .version import ChromeVersion
@@ -44,19 +45,54 @@ class ChromeDriverManager:
             self.verify_driver()
 
     def _download_driver(self) -> None:
-        """Download ChromeDriver using npm."""
+        """Download ChromeDriver using npx."""
         try:
             chrome_version = ChromeVersion.get_chrome_version()
             major_version = ChromeVersion.get_major_version(chrome_version)
             
             logger.info(f"Downloading ChromeDriver for Chrome version {major_version}")
-            cmd = f"npx @puppeteer/browsers install chromedriver@{major_version}"
             
-            result = subprocess.run(cmd.split(), capture_output=True, text=True)
+            # Créer un répertoire temporaire pour le téléchargement
+            temp_dir = os.path.join(self.install_path, "temp")
+            os.makedirs(temp_dir, exist_ok=True)
+            
+            # Utiliser npx avec le chemin complet et les options appropriées
+            cmd = f"npx --yes @puppeteer/browsers install chromedriver@{major_version}"
+            
+            # Exécuter la commande dans le répertoire temporaire
+            result = subprocess.run(cmd.split(), 
+                                 capture_output=True, 
+                                 text=True,
+                                 cwd=temp_dir)
+            
             if result.returncode != 0:
                 raise ChromeDriverError(f"Failed to download ChromeDriver: {result.stderr}")
+            
+            # Trouver le chemin du chromedriver téléchargé
+            chrome_path = None
+            for root, _, files in os.walk(temp_dir):
+                if self.executable in files:
+                    chrome_path = os.path.join(root, self.executable)
+                    break
+                    
+            if not chrome_path:
+                raise ChromeDriverError("ChromeDriver executable not found after download")
                 
-            logger.info("ChromeDriver downloaded successfully")
+            # Définir les permissions sur Linux/Mac
+            if self.system != "windows":
+                os.chmod(chrome_path, 0o755)
+            
+            # Supprimer l'ancien chromedriver s'il existe
+            if os.path.exists(self.driver_path):
+                os.remove(self.driver_path)
+            
+            # Copier l'exécutable vers le répertoire d'installation
+            shutil.copy2(chrome_path, self.driver_path)
+            
+            # Nettoyer le répertoire temporaire
+            shutil.rmtree(temp_dir)
+                
+            logger.info("ChromeDriver downloaded and configured successfully")
             
         except Exception as e:
-            raise ChromeDriverError(f"Failed to download ChromeDriver: {e}") 
+            raise ChromeDriverError(f"Failed to download ChromeDriver: {e}")

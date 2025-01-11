@@ -15,6 +15,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from dotenv import load_dotenv, dotenv_values
+from validators import CredentialsValidator, CredentialsValidationError
 
 # Configure logging
 logging.basicConfig(
@@ -26,12 +27,22 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 config = dotenv_values()
-mail_address = config.get('MAIL_ADDRESS')
-password = config.get('PASSWORD')
-local_repo_path = config.get('LOCAL_REPO_PATH')
-file_name = config.get('KATA_FILE_NAME')
-username = config.get('USERNAME')
-push_step = config.get('PUSH_STEP')
+
+# Validate credentials before proceeding
+success, error_message = CredentialsValidator.validate_credentials(config)
+if not success:
+    logger.error("Configuration validation failed")
+    print(f"Error: {error_message}")
+    print("Please check your .env file and try again.")
+    exit(1)
+
+# Load configuration after validation
+mail_address = config['MAIL_ADDRESS']
+password = config['PASSWORD']
+local_repo_path = config['LOCAL_REPO_PATH']
+file_name = config['KATA_FILE_NAME']
+username = config['USERNAME']
+push_step = config.get('PUSH_STEP', '5')  # Default to 5 if not specified
 actual_getted_katas = 0
 
 class AuthenticationError(Exception):

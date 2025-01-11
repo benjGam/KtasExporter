@@ -57,6 +57,13 @@ Run the tool using:
 windows.bat
 ```
 
+## Disclaimer
+
+⚠️ **Important**: To maintain the spirit of Codewars and respect the learning process of others:
+- Always keep your kata solutions repository **private**
+- Do not share your solutions publicly
+- Use this tool for personal reference only
+
 ## What it does
 
 1. Connects to your Codewars account
@@ -77,13 +84,6 @@ If you encounter ChromeDriver compatibility issues:
 1. Check your Chrome version
 2. Download the matching ChromeDriver version
 3. Replace the driver in the `src/` directory
-
-## Disclaimer
-
-⚠️ **Important**: To maintain the spirit of Codewars and respect the learning process of others:
-- Always keep your kata solutions repository **private**
-- Do not share your solutions publicly
-- Use this tool for personal reference only
 
 ## Notes
 

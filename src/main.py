@@ -49,7 +49,7 @@ try:
     
 except (ConfigurationError, ValidationError) as e:
     logger.error(f"Configuration error: {str(e)}")
-    print("Please check your .env file and try again.")
+    logger.error("Please check your .env file and try again.")
     exit(1)
 
 def get_kata_code(element):
@@ -105,7 +105,7 @@ def run():
     file_management.read_kata_file(local_repo_path, file_name)
     utils.start_browser_session()
     gvars.web_driver.get("https://www.codewars.com/users/sign_in")
-    print("Connecting to your Codewars account...")
+    logger.info("Connecting to your Codewars account...")
     
     try:
         # Initialize validator with web driver
@@ -116,16 +116,16 @@ def run():
         
         # Navigate to completed solutions
         gvars.web_driver.get(f'https://www.codewars.com/users/{credentials.username}/completed_solutions')
-        print("Getting completed katas...")
+        logger.info("Getting completed katas...")
         get_katas()
         
     except AuthenticationError as e:
         logger.error(str(e))
-        print("Failed to authenticate. Please check your credentials and try again.")
+        logger.error("Failed to authenticate. Please check your credentials and try again.")
         exit(1)
     except Exception as e:
         logger.error(f"An unexpected error occurred: {str(e)}")
-        print("An error occurred. Check the logs for more details.")
+        logger.error("An error occurred. Check the logs for more details.")
         exit(1)
 
 run() 

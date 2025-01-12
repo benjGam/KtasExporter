@@ -22,6 +22,27 @@ def check_command_exists(command: str) -> bool:
         return True
     except (subprocess.SubprocessError, FileNotFoundError):
         return False
+def verify_pnpm_installation() -> bool:
+    """
+    Verify if pnpm is installed on the system.
+    
+    Returns:
+        bool: True if pnpm is installed, False otherwise
+    """
+    if not check_command_exists('pnpm'):
+        return False
+    return True
+
+def verify_yarn_installation() -> bool:
+    """
+    Verify if yarn is installed on the system.
+    
+    Returns:
+        bool: True if yarn is installed, False otherwise
+    """
+    if not check_command_exists('yarn'):
+        return False
+    return True
 
 def verify_npm_installation() -> bool:
     """
@@ -31,6 +52,5 @@ def verify_npm_installation() -> bool:
         bool: True if npm is installed, False otherwise
     """
     if not check_command_exists('npm'):
-        logger.error("npm is not installed. Please install Node.js and npm to use this feature.")
         return False
     return True 

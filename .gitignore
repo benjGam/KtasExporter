@@ -25,3 +25,4 @@
 .env
 __pycache__
 venv/
+chromedriver

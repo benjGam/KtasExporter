@@ -38,7 +38,7 @@ fi
 # Install dependencies
 echo "Installing dependencies..."
 alias pip="$FOLDER_PATH/venv/bin/pip"
-pip install -U selenium python-dotenv bs4
+pip install -U selenium python-dotenv bs4 requests
 
 # Ask for alias creation
 printf "\nDo you want to add the 'ktasexport' alias to your shell config? [Y/n] "

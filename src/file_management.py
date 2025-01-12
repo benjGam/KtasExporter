@@ -1,6 +1,9 @@
 import gvars 
 from Kata import Kata
 import traceback
+import logging
+
+logger = logging.getLogger(__name__)
 
 def add_kata_in_file(repo_path, file_name, toWrite): 
     f = open(repo_path + '/' + file_name, "a"); 
@@ -16,5 +19,5 @@ def read_kata_file(repo_path, file_name):
                 kata_title = line[1:line.rfind('#')].strip().split("[")[0].strip(); 
                 gvars.already_pushed_katas.append(kata_title);  
     except Exception as e:
-        print(e); 
+        logger.error(f"Error reading kata file: {str(e)}"); 
         exit; 

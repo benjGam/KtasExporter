@@ -3,10 +3,10 @@ import platform
 import logging
 import subprocess
 import shutil
-from typing import Optional
+from typing import Optional, Tuple
 from .exceptions import ChromeDriverError
 from .version import ChromeVersion
-from .system_utils import verify_npm_installation
+from .system_utils import verify_npm_installation, verify_pnpm_installation, verify_yarn_installation
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,25 @@ class ChromeDriverManager:
         self.system = platform.system().lower()
         self.executable = "chromedriver.exe" if self.system == "windows" else "chromedriver"
         self.driver_path = os.path.join(self.install_path, self.executable)
+    
+    def _get_package_manager_command(self) -> Tuple[str, str]:
+        """
+        Determine which package manager to use and return appropriate command.
+        
+        Returns:
+            Tuple[str, str]: Package manager name and command to use
+        
+        Raises:
+            ChromeDriverError: If no supported package manager is found
+        """
+        if verify_pnpm_installation():
+            return "pnpm", "pnpm dlx"
+        elif verify_yarn_installation():
+            return "Yarn", "yarn dlx"
+        elif verify_npm_installation():
+            return "npm", "npx --yes"
+        else:
+            raise ChromeDriverError("No supported Node.js package manager (pnpm, yarn, or npm) found")
     
     def verify_driver(self) -> None:
         """Verify ChromeDriver exists and is executable."""
@@ -46,11 +65,12 @@ class ChromeDriverManager:
             self.verify_driver()
 
     def _download_driver(self) -> None:
-        """Download ChromeDriver using npx."""
+        """Download ChromeDriver using available package manager."""
         try:
-            if not verify_npm_installation():
-                raise ChromeDriverError("npm is not installed")
-                
+            # Déterminer le gestionnaire de paquets à utiliser
+            pkg_manager, cmd_prefix = self._get_package_manager_command()
+            logger.info(f"Using {pkg_manager} to download ChromeDriver")
+            
             chrome_version = ChromeVersion.get_chrome_version()
             major_version = ChromeVersion.get_major_version(chrome_version)
             
@@ -60,8 +80,8 @@ class ChromeDriverManager:
             temp_dir = os.path.join(self.install_path, "temp")
             os.makedirs(temp_dir, exist_ok=True)
             
-            # Utiliser npx avec le chemin complet et les options appropriées
-            cmd = f"npx --yes @puppeteer/browsers install chromedriver@{major_version}"
+            # Utiliser le gestionnaire de paquets avec le chemin complet et les options appropriées
+            cmd = f"{cmd_prefix} @puppeteer/browsers install chromedriver@{major_version}"
             
             # Exécuter la commande dans le répertoire temporaire
             result = subprocess.run(cmd.split(), 
@@ -96,7 +116,7 @@ class ChromeDriverManager:
             # Nettoyer le répertoire temporaire
             shutil.rmtree(temp_dir)
                 
-            logger.info("ChromeDriver downloaded and configured successfully")
+            logger.info("ChromeDriver downloaded successfully")
             
         except Exception as e:
             raise ChromeDriverError(f"Failed to download ChromeDriver: {e}")

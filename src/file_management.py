@@ -1,23 +1,55 @@
-import gvars 
-from Kata import Kata
-import traceback
+"""Module for managing kata file operations."""
+
+import os
+import gvars
+from typing import List
 import logging
 
 logger = logging.getLogger(__name__)
 
-def add_kata_in_file(repo_path, file_name, toWrite): 
-    f = open(repo_path + '/' + file_name, "a"); 
-    f.write(toWrite); 
-    f.close(); 
-
-def read_kata_file(repo_path, file_name):
+def add_kata_in_file(repo_path: str, file_name: str, content: str) -> None:
+    """
+    Append a kata to the specified file.
+    
+    Args:
+        repo_path: Path to the repository
+        file_name: Name of the file to write to
+        content: Content to write
+        
+    Raises:
+        IOError: If there is an error writing to the file
+    """
+    file_path = os.path.join(repo_path, file_name)
     try:
-        f = open(repo_path + '/' + file_name, 'r'); 
-        content = f.readlines();  
-        for line in content: 
-            if(line[0] == '#' and "kyu" in line.lower()):
-                kata_title = line[1:line.rfind('#')].strip().split("[")[0].strip(); 
-                gvars.already_pushed_katas.append(kata_title);  
-    except Exception as e:
-        logger.error(f"Error reading kata file: {str(e)}"); 
-        exit; 
+        with open(file_path, "a") as f:
+            f.write(content)
+    except IOError as e:
+        logger.error(f"Error writing to file {file_path}: {str(e)}")
+        raise
+
+def read_kata_file(repo_path: str, file_name: str) -> None:
+    """
+    Read and process the kata file to populate already_pushed_katas.
+    
+    Args:
+        repo_path: Path to the repository
+        file_name: Name of the file to read
+        
+    Raises:
+        FileNotFoundError: If the file does not exist
+        IOError: If there is an error reading the file
+    """
+    file_path = os.path.join(repo_path, file_name)
+    
+    try:
+        with open(file_path, 'r') as f:
+            for line in f:
+                if line.startswith('#') and "kyu" in line.lower():
+                    kata_title = line[1:line.rfind('#')].strip().split("[")[0].strip()
+                    gvars.already_pushed_katas.append(kata_title)
+    except FileNotFoundError:
+        logger.warning(f"File {file_path} not found. Creating a new file.")
+        open(file_path, 'a').close()
+    except IOError as e:
+        logger.error(f"Error reading file {file_path}: {str(e)}")
+        raise 

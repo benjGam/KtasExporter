@@ -67,7 +67,7 @@ class ChromeDriverManager:
     def _download_driver(self) -> None:
         """Download ChromeDriver using available package manager."""
         try:
-            # Déterminer le gestionnaire de paquets à utiliser
+            # Determine which package manager to use
             pkg_manager, cmd_prefix = self._get_package_manager_command()
             logger.info(f"Using {pkg_manager} to download ChromeDriver")
             
@@ -76,14 +76,14 @@ class ChromeDriverManager:
             
             logger.info(f"Downloading ChromeDriver for Chrome version {major_version}")
             
-            # Créer un répertoire temporaire pour le téléchargement
+            # Create temporary directory for download
             temp_dir = os.path.join(self.install_path, "temp")
             os.makedirs(temp_dir, exist_ok=True)
             
-            # Utiliser le gestionnaire de paquets avec le chemin complet et les options appropriées
+            # Use package manager with full path and appropriate options
             cmd = f"{cmd_prefix} @puppeteer/browsers install chromedriver@{major_version}"
             
-            # Exécuter la commande dans le répertoire temporaire
+            # Execute command in temporary directory
             result = subprocess.run(cmd.split(), 
                                  capture_output=True, 
                                  text=True,
@@ -92,28 +92,28 @@ class ChromeDriverManager:
             if result.returncode != 0:
                 raise ChromeDriverError(f"Failed to download ChromeDriver: {result.stderr}")
             
-            # Trouver le chemin du chromedriver téléchargé
+            # Find downloaded chromedriver path
             chrome_path = None
             for root, _, files in os.walk(temp_dir):
                 if self.executable in files:
                     chrome_path = os.path.join(root, self.executable)
                     break
-                    
+            
             if not chrome_path:
                 raise ChromeDriverError("ChromeDriver executable not found after download")
                 
-            # Définir les permissions sur Linux/Mac
+            # Set permissions on Linux/Mac
             if self.system != "windows":
                 os.chmod(chrome_path, 0o755)
             
-            # Supprimer l'ancien chromedriver s'il existe
+            # Remove old chromedriver if exists
             if os.path.exists(self.driver_path):
                 os.remove(self.driver_path)
             
-            # Copier l'exécutable vers le répertoire d'installation
+            # Copy executable to installation directory
             shutil.copy2(chrome_path, self.driver_path)
             
-            # Nettoyer le répertoire temporaire
+            # Clean up temporary directory
             shutil.rmtree(temp_dir)
                 
             logger.info("ChromeDriver downloaded successfully")

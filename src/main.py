@@ -8,6 +8,7 @@ import file_management
 from gvars import app_state
 import web_scraper
 from config import Configuration
+from path_validator import PathValidationError
 from auth import (
     Credentials,
     CredentialsValidator,
@@ -40,6 +41,9 @@ def main():
             username=config.username
         )
         
+        # Validate paths at startup
+        file_management.validate_paths(config.local_repo_path, config.kata_file_name)
+        
         # Initialize file management
         file_management.read_kata_file(config.local_repo_path, config.kata_file_name)
         
@@ -66,6 +70,10 @@ def main():
     except AuthenticationError as e:
         logger.error(str(e))
         logger.error("Failed to authenticate. Please check your credentials and try again.")
+        exit(1)
+    except PathValidationError as e:
+        logger.error(str(e))
+        logger.error("Path validation failed. Please check your paths and permissions.")
         exit(1)
     except Exception as e:
         logger.error(f"An unexpected error occurred: {str(e)}")

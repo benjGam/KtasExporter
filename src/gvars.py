@@ -16,6 +16,17 @@ class ApplicationState:
         self._web_driver: Optional[webdriver.Chrome] = None
         self._completed_katas: List[str] = []
         self._pushed_katas: List[str] = []
+        self._different_file_depending_on_language: bool = False
+    
+    @property
+    def different_file_depending_on_language(self) -> bool:
+        """Get the language-based file separation setting."""
+        return self._different_file_depending_on_language
+    
+    @different_file_depending_on_language.setter
+    def different_file_depending_on_language(self, value: bool) -> None:
+        """Set the language-based file separation setting."""
+        self._different_file_depending_on_language = value
     
     @property
     def web_driver(self) -> Optional[webdriver.Chrome]:

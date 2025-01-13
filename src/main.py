@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 def save_and_commit_kata(kata, file_manager: FileManager) -> None:
     """Save a kata to file and commit it."""
     content = f"# {kata.name} [{kata.level}] #{len(app_state.pushed_katas)}\n\n```{kata.language}\n{kata.code}\n```\n\n"
-    file_manager.add_kata(content)
+    file_manager.add_kata(content, kata.language)
     os.system(f'cd {file_manager.repo_path} && git add . && git commit -m "docs(common): add \'{kata.name}\' kata" > /dev/null 2>&1')
     logger.info(f"Le kata '{kata.name}' a été ajouté")
 
@@ -41,6 +41,9 @@ def main():
             password=config.password,
             username=config.username
         )
+        
+        # Set global configuration
+        app_state.different_file_depending_on_language = config.different_file_depending_on_language
         
         # Initialize file manager and validate paths
         file_manager = FileManager(config.local_repo_path, config.kata_file_name)

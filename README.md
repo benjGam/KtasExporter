@@ -81,6 +81,12 @@ After installation, you can use the tool in two ways:
 - Progressive kata extraction
 - Automatic Git commits
 - Duplicate prevention for already exported katas
+- Cross-platform support (Linux/Windows/MacOS)
+- Automatic ChromeDriver management:
+  - Version compatibility check
+  - Automatic updates
+  - Multi-package manager support (npm/yarn/pnpm)
+  - Environment-based setup
 
 ## Troubleshooting
 

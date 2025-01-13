@@ -2,6 +2,7 @@
 
 import os
 import logging
+import subprocess
 from typing import Optional
 
 logger = logging.getLogger(__name__)
@@ -9,6 +10,35 @@ logger = logging.getLogger(__name__)
 class PathValidationError(Exception):
     """Exception raised for path validation errors."""
     pass
+
+def validate_git_repository(path: str) -> None:
+    """
+    Validate if a directory is a Git repository.
+    
+    Args:
+        path: Path to validate
+        
+    Raises:
+        PathValidationError: If path is not a Git repository
+    """
+    try:
+        result = subprocess.run(
+            ['git', 'rev-parse', '--is-inside-work-tree'],
+            cwd=path,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        if result.stdout.strip() != 'true':
+            logger.error(f"Invalid repository: {path} is not a Git repository")
+            raise PathValidationError(f"Path is not a Git repository: {path}")
+        logger.info("Git repository validation successful")
+    except subprocess.CalledProcessError:
+        logger.error(f"Invalid repository: {path} is not a Git repository")
+        raise PathValidationError(f"Path is not a Git repository: {path}")
+    except Exception as e:
+        logger.error(f"Failed to validate Git repository: {e}")
+        raise PathValidationError(f"Failed to validate Git repository: {e}")
 
 def validate_path(path: str, require_write: bool = True) -> None:
     """

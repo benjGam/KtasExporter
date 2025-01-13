@@ -4,7 +4,7 @@ import os
 from typing import Set
 import logging
 from gvars import app_state
-from path_validator import validate_path, validate_file_path, PathValidationError
+from path_validator import validate_path, validate_file_path, validate_git_repository, PathValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +21,7 @@ def validate_paths(repo_path: str, file_name: str) -> None:
     """
     logger.info("Validating paths...")
     validate_path(repo_path)
+    validate_git_repository(repo_path)
     validate_file_path(os.path.join(repo_path, file_name), create_if_missing=True)
     logger.info("Path validation completed successfully")
 

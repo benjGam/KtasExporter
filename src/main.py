@@ -28,7 +28,8 @@ def save_and_commit_kata(kata, repo_path: str, file_name: str) -> None:
     """Save a kata to file and commit it."""
     content = f"# {kata.name} [{kata.level}] #{len(app_state.pushed_katas)}\n\n```{kata.language}\n{kata.code}\n```\n\n"
     file_management.add_kata_in_file(repo_path, file_name, content)
-    os.system(f'cd {repo_path} && git add . && git commit -m "docs(common): add \'{kata.name}\' kata"')
+    os.system(f'cd {repo_path} && git add . && git commit -m "docs(common): add \'{kata.name}\' kata" > /dev/null 2>&1')
+    logger.info(f"Le kata '{kata.name}' a été ajouté")
 
 def main():
     """Main function to run the kata exporter."""

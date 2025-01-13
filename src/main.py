@@ -5,7 +5,7 @@ import logging
 from typing import List
 import utils
 import file_management
-import gvars
+from gvars import app_state
 import web_scraper
 from config import Configuration
 from auth import (
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 def save_and_commit_kata(kata, repo_path: str, file_name: str) -> None:
     """Save a kata to file and commit it."""
-    content = f"# {kata.name} [{kata.level}] #{len(gvars.already_pushed_katas)}\n\n```{kata.language}\n{kata.code}\n```\n\n"
+    content = f"# {kata.name} [{kata.level}] #{len(app_state.pushed_katas)}\n\n```{kata.language}\n{kata.code}\n```\n\n"
     file_management.add_kata_in_file(repo_path, file_name, content)
     os.system(f'cd {repo_path} && git add . && git commit -m "docs(common): add \'{kata.name}\' kata"')
 
@@ -45,14 +45,14 @@ def main():
         
         # Start browser session and authenticate
         utils.start_browser_session()
-        gvars.web_driver.get("https://www.codewars.com/users/sign_in")
+        app_state.web_driver.get("https://www.codewars.com/users/sign_in")
         logger.info("Connecting to your Codewars account...")
         
-        validator = CredentialsValidator(gvars.web_driver)
+        validator = CredentialsValidator(app_state.web_driver)
         validator.authenticate(credentials)
         
         # Navigate to completed solutions and get katas
-        gvars.web_driver.get(f'https://www.codewars.com/users/{credentials.username}/completed_solutions')
+        app_state.web_driver.get(f'https://www.codewars.com/users/{credentials.username}/completed_solutions')
         logger.info("Getting completed katas...")
         
         katas = web_scraper.get_completed_katas(config.push_step)
@@ -71,8 +71,8 @@ def main():
         logger.error(f"An unexpected error occurred: {str(e)}")
         exit(1)
     finally:
-        if gvars.web_driver:
-            gvars.web_driver.quit()
+        if app_state.web_driver:
+            app_state.cleanup()
 
 if __name__ == "__main__":
     main()

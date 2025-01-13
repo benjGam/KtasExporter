@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from typing import Optional, List
 import logging
-import gvars
+from gvars import app_state
 from Kata import Kata
 
 logger = logging.getLogger(__name__)
@@ -37,8 +37,8 @@ def load_more_solutions() -> bool:
         bool: True if more solutions were loaded, False otherwise
     """
     try:
-        element = gvars.web_driver.find_element(By.CLASS_NAME, 'js-infinite-marker')
-        gvars.web_driver.execute_script("arguments[0].scrollIntoView();", element)
+        element = app_state.web_driver.find_element(By.CLASS_NAME, 'js-infinite-marker')
+        app_state.web_driver.execute_script("arguments[0].scrollIntoView();", element)
         return True
     except NoSuchElementException:
         return False
@@ -56,7 +56,7 @@ def extract_kata_from_solution(solution) -> Optional[Kata]:
     try:
         kata_name = get_kata_name(solution.find_element(By.CLASS_NAME, 'item-title'))
         
-        if kata_name in gvars.already_pushed_katas:
+        if app_state.is_kata_pushed(kata_name):
             return None
             
         kata_level = get_kata_level(solution.find_element(By.CLASS_NAME, 'item-title'))
@@ -88,7 +88,7 @@ def get_completed_katas(push_step: int) -> List[Kata]:
     """
     katas = []
     while len(katas) < push_step:
-        solutions = gvars.web_driver.find_elements(By.CLASS_NAME, "list-item-solutions")
+        solutions = app_state.web_driver.find_elements(By.CLASS_NAME, "list-item-solutions")
         
         for solution in solutions:
             if len(katas) >= push_step:
@@ -97,7 +97,8 @@ def get_completed_katas(push_step: int) -> List[Kata]:
             kata = extract_kata_from_solution(solution)
             if kata:
                 katas.append(kata)
-                gvars.already_pushed_katas.append(kata.name)
+                app_state.add_completed_kata(kata.name)
+                app_state.add_pushed_kata(kata.name)
         
         if not load_more_solutions():
             break

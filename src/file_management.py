@@ -3,7 +3,7 @@
 import os
 from typing import Set
 import logging
-import gvars
+from gvars import app_state
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,8 @@ def read_kata_file(repo_path: str, file_name: str) -> None:
                     kata_title = line[1:line.rfind('#')].strip().split("[")[0].strip()
                     kata_set.add(kata_title)
         
-        gvars.already_pushed_katas = list(kata_set)
+        for kata_name in kata_set:
+            app_state.add_pushed_kata(kata_name)
         
     except FileNotFoundError:
         logger.warning(f"File {file_path} not found. Creating a new file.")

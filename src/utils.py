@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from webdriver_manager import ChromeDriverManager
-import gvars
+from gvars import app_state
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ def start_browser_session() -> None:
         manager.update_if_needed()
         
         service = webdriver.chrome.service.Service(executable_path=manager.driver_path)
-        gvars.web_driver = webdriver.Chrome(options=options, service=service)
+        app_state.web_driver = webdriver.Chrome(options=options, service=service)
         logger.info("Browser session started successfully")
         
     except Exception as e:
@@ -48,7 +48,7 @@ def wait_for_element(by: By, value: str, timeout: int = 10) -> Optional[webdrive
         WebElement if found, None otherwise
     """
     try:
-        wait = WebDriverWait(gvars.web_driver, timeout)
+        wait = WebDriverWait(app_state.web_driver, timeout)
         return wait.until(
             EC.presence_of_element_located((by, value))
         )
@@ -66,7 +66,7 @@ def wait_for_page_load(timeout: int = 10) -> bool:
         bool: True if page loaded, False otherwise
     """
     try:
-        wait = WebDriverWait(gvars.web_driver, timeout)
+        wait = WebDriverWait(app_state.web_driver, timeout)
         wait.until(
             lambda driver: driver.execute_script('return document.readyState') == 'complete'
         )

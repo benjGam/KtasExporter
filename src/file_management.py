@@ -82,7 +82,7 @@ class FileManager:
             
     def read_katas(self) -> None:
         """
-        Read and process the kata file to populate already_pushed_katas.
+        Read and process all kata files in the repository to populate already_pushed_katas.
         Uses a set for faster lookups and memory efficiency.
         
         Raises:
@@ -90,30 +90,26 @@ class FileManager:
             IOError: If there is an error reading the file
         """
         kata_set: Set[str] = set()
-        files_to_read = [self.file_path]
         
-        # Add language-specific files if they exist
-        if app_state.different_file_depending_on_language:
-            base_name, ext = os.path.splitext(self.file_name)
-            for file in os.listdir(self.repo_path):
-                if file.startswith(f"{base_name}-") and file.endswith(ext):
-                    files_to_read.append(os.path.join(self.repo_path, file))
-        
-        for file_path in files_to_read:
-            try:
-                with open(file_path, 'r', buffering=8192) as f:
-                    for line in f:
-                        if line.startswith('#') and "kyu" in line.lower():
-                            kata_title = line[1:line.rfind('#')].strip().split("[")[0].strip()
-                            kata_set.add(kata_title)
-                            
-            except FileNotFoundError:
-                if file_path == self.file_path:
-                    logger.warning(f"File {file_path} not found. Creating a new file.")
-                    open(file_path, 'a').close()
-            except IOError as e:
-                logger.error(f"Error reading file {file_path}: {str(e)}")
-                raise
+        # Get all markdown files in the repository
+        _, ext = os.path.splitext(self.file_name)
+        for file in os.listdir(self.repo_path):
+            if file.endswith(ext):
+                file_path = os.path.join(self.repo_path, file)
+                try:
+                    with open(file_path, 'r', buffering=8192) as f:
+                        for line in f:
+                            if line.startswith('#') and "kyu" in line.lower():
+                                kata_title = line[1:line.rfind('#')].strip().split("[")[0].strip()
+                                kata_set.add(kata_title)
+                                
+                except FileNotFoundError:
+                    if file_path == self.file_path:
+                        logger.warning(f"File {file_path} not found. Creating a new file.")
+                        open(file_path, 'a').close()
+                except IOError as e:
+                    logger.error(f"Error reading file {file_path}: {str(e)}")
+                    raise
         
         for kata_name in kata_set:
             app_state.add_pushed_kata(kata_name)

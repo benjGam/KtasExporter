@@ -3,7 +3,7 @@
 import os
 import logging
 from typing import List
-from system_utils import utils
+from system_utils import start_browser_session
 from file_management import FileManager
 from app_state import app_state
 from web_scraper import get_completed_katas
@@ -51,7 +51,7 @@ def main():
         file_manager.read_katas()
         
         # Start browser session and authenticate
-        utils.start_browser_session()
+        start_browser_session()
         app_state.web_driver.get("https://www.codewars.com/users/sign_in")
         logger.info("Connecting to your Codewars account...")
         

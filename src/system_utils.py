@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from webdriver_manager import ChromeDriverManager
-from gvars import app_state
+from app_state import app_state
 
 logger = logging.getLogger(__name__)
 

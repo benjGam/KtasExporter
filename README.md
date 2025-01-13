@@ -35,6 +35,7 @@ cd KtasExporter
    KATA_FILE_NAME=katas.md
    USERNAME=your-codewars-username
    PUSH_STEP=10  # Number of katas to export per run
+   DIFFERENT_FILE_DEPENDING_ON_LANGUAGE=false  # Set to true to separate katas by language
    ```
 
 ## Usage
@@ -82,6 +83,10 @@ After installation, you can use the tool in two ways:
 - Automatic Git commits
 - Duplicate prevention for already exported katas
 - Cross-platform support (Linux/Windows/MacOS)
+- Language-based file organization:
+  - Optional separation of katas by programming language
+  - Automatic file creation and management
+  - Maintains backward compatibility
 - Automatic ChromeDriver management:
   - Version compatibility check
   - Automatic updates

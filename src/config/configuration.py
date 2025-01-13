@@ -102,4 +102,9 @@ class Configuration:
     @property
     def push_step(self) -> int:
         """Get push step with default value."""
-        return int(self.get('PUSH_STEP', '5')) 
+        return int(self.get('PUSH_STEP', '5'))
+        
+    @property
+    def different_file_depending_on_language(self) -> bool:
+        """Get whether to use different files for each language."""
+        return self.get('DIFFERENT_FILE_DEPENDING_ON_LANGUAGE', 'false').lower() == 'true' 

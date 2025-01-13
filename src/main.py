@@ -4,7 +4,7 @@ import os
 import logging
 from typing import List
 import utils
-import file_management
+from file_management import FileManager
 from gvars import app_state
 import web_scraper
 from config import Configuration
@@ -24,11 +24,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-def save_and_commit_kata(kata, repo_path: str, file_name: str) -> None:
+def save_and_commit_kata(kata, file_manager: FileManager) -> None:
     """Save a kata to file and commit it."""
     content = f"# {kata.name} [{kata.level}] #{len(app_state.pushed_katas)}\n\n```{kata.language}\n{kata.code}\n```\n\n"
-    file_management.add_kata_in_file(repo_path, file_name, content)
-    os.system(f'cd {repo_path} && git add . && git commit -m "docs(common): add \'{kata.name}\' kata"')
+    file_manager.add_kata(content, kata.language)
+    os.system(f'cd {file_manager.repo_path} && git add . && git commit -m "docs(common): add \'{kata.name}\' kata" > /dev/null 2>&1')
+    logger.info(f"Le kata '{kata.name}' a été ajouté")
 
 def main():
     """Main function to run the kata exporter."""
@@ -41,11 +42,13 @@ def main():
             username=config.username
         )
         
-        # Validate paths at startup
-        file_management.validate_paths(config.local_repo_path, config.kata_file_name)
+        # Set global configuration
+        app_state.different_file_depending_on_language = config.different_file_depending_on_language
         
-        # Initialize file management
-        file_management.read_kata_file(config.local_repo_path, config.kata_file_name)
+        # Initialize file manager and validate paths
+        file_manager = FileManager(config.local_repo_path, config.kata_file_name)
+        file_manager.validate_paths()
+        file_manager.read_katas()
         
         # Start browser session and authenticate
         utils.start_browser_session()
@@ -61,7 +64,7 @@ def main():
         
         katas = web_scraper.get_completed_katas(config.push_step)
         for kata in katas:
-            save_and_commit_kata(kata, config.local_repo_path, config.kata_file_name)
+            save_and_commit_kata(kata, file_manager)
             
     except (ConfigurationError, ValidationError) as e:
         logger.error(f"Configuration error: {str(e)}")

@@ -1,15 +1,15 @@
 """Module for managing kata file operations."""
 
 import os
-import gvars
-from typing import List
+from typing import Set
 import logging
+import gvars
 
 logger = logging.getLogger(__name__)
 
 def add_kata_in_file(repo_path: str, file_name: str, content: str) -> None:
     """
-    Append a kata to the specified file.
+    Append a kata to the specified file using buffered write.
     
     Args:
         repo_path: Path to the repository
@@ -21,7 +21,7 @@ def add_kata_in_file(repo_path: str, file_name: str, content: str) -> None:
     """
     file_path = os.path.join(repo_path, file_name)
     try:
-        with open(file_path, "a") as f:
+        with open(file_path, "a", buffering=8192) as f:
             f.write(content)
     except IOError as e:
         logger.error(f"Error writing to file {file_path}: {str(e)}")
@@ -30,6 +30,7 @@ def add_kata_in_file(repo_path: str, file_name: str, content: str) -> None:
 def read_kata_file(repo_path: str, file_name: str) -> None:
     """
     Read and process the kata file to populate already_pushed_katas.
+    Uses a set for faster lookups and memory efficiency.
     
     Args:
         repo_path: Path to the repository
@@ -40,13 +41,17 @@ def read_kata_file(repo_path: str, file_name: str) -> None:
         IOError: If there is an error reading the file
     """
     file_path = os.path.join(repo_path, file_name)
+    kata_set: Set[str] = set()
     
     try:
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', buffering=8192) as f:
             for line in f:
                 if line.startswith('#') and "kyu" in line.lower():
                     kata_title = line[1:line.rfind('#')].strip().split("[")[0].strip()
-                    gvars.already_pushed_katas.append(kata_title)
+                    kata_set.add(kata_title)
+        
+        gvars.already_pushed_katas = list(kata_set)
+        
     except FileNotFoundError:
         logger.warning(f"File {file_path} not found. Creating a new file.")
         open(file_path, 'a').close()

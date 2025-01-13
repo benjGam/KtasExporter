@@ -1,0 +1,63 @@
+# Cursor Rules Configuration
+
+# Rule: benchperf
+# Description: Performs a comparative performance analysis between current and develop branches
+# Usage: Type 'benchperf' in the conversation
+benchperf:
+  steps:
+    # First test on current branch
+    - name: "Current Branch Test"
+      commands:
+        - "git branch --show-current > /tmp/current_branch"
+        - "time ./run.sh > /tmp/current_branch_output 2>&1"
+      
+    # Test on develop branch
+    - name: "Develop Branch Test"
+      commands:
+        - "git stash"
+        - "git checkout develop"
+        - "time ./run.sh > /tmp/develop_branch_output 2>&1"
+        
+    # Return to original branch
+    - name: "Restore State"
+      commands:
+        - "git checkout $(cat /tmp/current_branch)"
+        - "git stash pop"
+        
+    # Analysis template
+    - name: "Analysis Template"
+      template: |
+        Analyse comparative des performances :
+        
+        1. Branche courante (${current_branch}) :
+           ```
+           ${current_output}
+           ```
+        
+        2. Branche develop :
+           ```
+           ${develop_output}
+           ```
+        
+        Analyse détaillée :
+        
+        1. Temps d'exécution :
+           - Différence : ${time_diff}
+           - Impact : ${performance_impact}
+        
+        2. Utilisation CPU :
+           - Comparaison user time : ${user_time_comparison}
+           - Comparaison system time : ${system_time_comparison}
+           - Analyse utilisation : ${cpu_usage_analysis}
+        
+        3. Étapes détaillées :
+           ```
+           ${current_branch}:
+           ${detailed_steps_current}
+           
+           develop:
+           ${detailed_steps_develop}
+           ```
+        
+        Conclusion :
+        ${conclusion} 

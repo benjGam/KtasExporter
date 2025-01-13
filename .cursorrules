@@ -8,15 +8,14 @@ benchperf:
     # First test on current branch
     - name: "Current Branch Test"
       commands:
-        - "git branch --show-current > /tmp/current_branch"
-        - "time ./run.sh > /tmp/current_branch_output 2>&1"
+        - "time ./run.sh > /tmp/current_branch_output_1 && time ./run.sh > /tmp/current_branch_output_2 && time ./run.sh > /tmp/current_branch_output_3"
+        - "git stash && git checkout develop"
       
     # Test on develop branch
     - name: "Develop Branch Test"
       commands:
-        - "git stash"
         - "git checkout develop"
-        - "time ./run.sh > /tmp/develop_branch_output 2>&1"
+        - "time ./run.sh > /tmp/develop_branch_output_1 && time ./run.sh > /tmp/develop_branch_output_2 && time ./run.sh > /tmp/develop_branch_output_3"
         
     # Return to original branch
     - name: "Restore State"
@@ -27,37 +26,94 @@ benchperf:
     # Analysis template
     - name: "Analysis Template"
       template: |
-        Analyse comparative des performances :
-        
-        1. Branche courante (${current_branch}) :
-           ```
-           ${current_output}
-           ```
-        
+        1. Branche `${current_branch}` :
+            ```
+           Test 1 :
+
+              Temps total : ${current_output_1_total}s
+              - User CPU time : ${current_output_1_user}s
+              - System CPU time : ${current_output_1_system}s
+              - CPU utilization : ${current_output_1_cpu}%
+
+              Étapes :
+                ${current_output_1_times_by_step}
+
+           Test 2 :
+              Temps total : ${current_output_2_total}s
+              - User CPU time : ${current_output_2_user}s
+              - System CPU time : ${current_output_2_system}s
+              - CPU utilization : ${current_output_2_cpu}%
+
+              Étapes :
+                ${current_output_2_times_by_step}
+
+           Test 3 :
+              Temps total : ${current_output_3_total}s
+              - User CPU time : ${current_output_3_user}s
+              - System CPU time : ${current_output_3_system}s
+              - CPU utilization : ${current_output_3_cpu}%
+
+              Étapes :
+                ${current_output_3_times_by_step}
+            ```
+
+            Meilleur test : 
+              Temps total : ${best_test_current_total}s
+              - User CPU time : ${best_test_current_user}s
+              - System CPU time : ${best_test_current_system}s
+              - CPU utilization : ${best_test_current_cpu}%
+
         2. Branche develop :
+            ```
+           Test 1 :
+              Temps total : ${develop_output_1_total}s
+              - User CPU time : ${develop_output_1_user}s
+              - System CPU time : ${develop_output_1_system}s
+              - CPU utilization : ${develop_output_1_cpu}%
+
+              Étapes :
+                ${develop_output_1_times_by_step}
+
+           Test 2 :
+              Temps total : ${current_output_2_total}s
+              - User CPU time : ${develop_output_2_user}s
+              - System CPU time : ${develop_output_2_system}s
+              - CPU utilization : ${develop_output_2_cpu}%
+
+              Étapes :
+                ${develop_output_2_times_by_step}
+
+           Test 3 :
+              Temps total : ${current_output_3_total}s
+              - User CPU time : ${develop_output_3_user}s
+              - System CPU time : ${develop_output_3_system}s
+              - CPU utilization : ${develop_output_3_cpu}%
+
+              Étapes :
+              ${develop_output_3_times_by_step}
+            ```
+
+            Meilleur test : 
+              Temps total : ${best_test_develop_total}s
+              - User CPU time : ${best_test_develop_user}s
+              - System CPU time : ${best_test_develop_system}s
+              - CPU utilization : ${best_test_develop_cpu}%
+
+        1. Différences:
+
            ```
-           ${develop_output}
+           Différences moyennes : (${current_branch} vs ${develop_branch}): ${ecart_moyen} en faveur de ${best_branch_result}
+           Meilleures differences : (${current_branch} vs ${develop_branch}): ${meilleur_ecart} en faveur de ${best_branch_result}
            ```
-        
-        Analyse détaillée :
-        
-        1. Temps d'exécution :
-           - Différence : ${time_diff}
-           - Impact : ${performance_impact}
-        
-        2. Utilisation CPU :
-           - Comparaison user time : ${user_time_comparison}
-           - Comparaison system time : ${system_time_comparison}
-           - Analyse utilisation : ${cpu_usage_analysis}
-        
-        3. Étapes détaillées :
-           ```
-           ${current_branch}:
-           ${detailed_steps_current}
-           
-           develop:
-           ${detailed_steps_develop}
-           ```
-        
-        Conclusion :
-        ${conclusion} 
+
+        2. Explications détaillées:
+
+          ```
+          ${detailed_explanation}
+          ```
+
+        3. Conclusions:
+
+          ```
+          ${conclusions}
+          ```

@@ -4,7 +4,7 @@ import logging
 import subprocess
 import shutil
 from typing import Optional, Tuple
-from .exceptions import ChromeDriverError
+from .exceptions import DriverVersionError, DriverDownloadError, DriverInstallationError
 from .version import ChromeVersion
 from .system_utils import verify_npm_installation, verify_pnpm_installation, verify_yarn_installation
 
@@ -28,7 +28,7 @@ class ChromeDriverManager:
             Tuple[str, str]: Package manager name and command to use
         
         Raises:
-            ChromeDriverError: If no supported package manager is found
+            DriverInstallationError: If no supported package manager is found
         """
         if verify_pnpm_installation():
             return "pnpm", "pnpm dlx"
@@ -37,29 +37,29 @@ class ChromeDriverManager:
         elif verify_npm_installation():
             return "npm", "npx --yes"
         else:
-            raise ChromeDriverError("No supported Node.js package manager (pnpm, yarn, or npm) found")
+            raise DriverInstallationError("No supported Node.js package manager (pnpm, yarn, or npm) found")
     
     def verify_driver(self) -> None:
         """Verify ChromeDriver exists and is executable."""
         if not os.path.exists(self.driver_path):
-            raise ChromeDriverError(f"ChromeDriver not found at {self.driver_path}")
+            raise DriverInstallationError(f"ChromeDriver not found at {self.driver_path}")
             
         if self.system != "windows":
             if not os.access(self.driver_path, os.X_OK):
-                raise ChromeDriverError(f"ChromeDriver at {self.driver_path} is not executable")
+                raise DriverInstallationError(f"ChromeDriver at {self.driver_path} is not executable")
                 
         try:
             result = subprocess.run([self.driver_path, "--version"], capture_output=True, text=True)
             version = result.stdout.split()[1]
             logging.info(f"ChromeDriver version: {version}")
         except (subprocess.SubprocessError, IndexError) as e:
-            raise ChromeDriverError(f"Failed to get ChromeDriver version: {e}") 
+            raise DriverVersionError(f"Failed to get ChromeDriver version: {e}") 
 
     def update_if_needed(self) -> None:
         """Update ChromeDriver if needed."""
         try:
             self.verify_driver()
-        except ChromeDriverError:
+        except (DriverVersionError, DriverInstallationError):
             logger.info("ChromeDriver needs to be updated")
             self._download_driver()
             self.verify_driver()
@@ -90,7 +90,7 @@ class ChromeDriverManager:
                                  cwd=temp_dir)
             
             if result.returncode != 0:
-                raise ChromeDriverError(f"Failed to download ChromeDriver: {result.stderr}")
+                raise DriverDownloadError(f"Failed to download ChromeDriver: {result.stderr}")
             
             # Find downloaded chromedriver path
             chrome_path = None
@@ -100,7 +100,7 @@ class ChromeDriverManager:
                     break
             
             if not chrome_path:
-                raise ChromeDriverError("ChromeDriver executable not found after download")
+                raise DriverDownloadError("ChromeDriver executable not found after download")
                 
             # Set permissions on Linux/Mac
             if self.system != "windows":
@@ -119,4 +119,4 @@ class ChromeDriverManager:
             logger.info("ChromeDriver downloaded successfully")
             
         except Exception as e:
-            raise ChromeDriverError(f"Failed to download ChromeDriver: {e}")
+            raise DriverDownloadError(f"Failed to download ChromeDriver: {e}")

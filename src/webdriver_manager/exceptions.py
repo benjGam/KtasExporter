@@ -1,15 +1,13 @@
-class ChromeDriverError(Exception):
-    """Base exception for ChromeDriver related errors."""
+"""WebDriver manager exceptions."""
+
+class DriverVersionError(Exception):
+    """Raised when there is an error with the driver version."""
     pass
 
-class VersionError(ChromeDriverError):
-    """Exception raised for version incompatibility issues."""
+class DriverDownloadError(Exception):
+    """Raised when there is an error downloading the driver."""
     pass
 
-class DownloadError(ChromeDriverError):
-    """Exception raised when ChromeDriver download fails."""
-    pass
-
-class InstallationError(ChromeDriverError):
-    """Exception raised when ChromeDriver installation fails."""
+class DriverInstallationError(Exception):
+    """Raised when there is an error installing the driver."""
     pass 

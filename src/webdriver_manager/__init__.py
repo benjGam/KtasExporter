@@ -1,12 +1,15 @@
-from .manager import ChromeDriverManager
-from .version import ChromeVersion
-from .exceptions import ChromeDriverError, VersionError, DownloadError, InstallationError
+"""WebDriver management module."""
+
+from webdriver_manager.chrome_manager import ChromeDriverManager
+from webdriver_manager.exceptions import (
+    DriverVersionError,
+    DriverDownloadError,
+    DriverInstallationError
+)
 
 __all__ = [
     'ChromeDriverManager',
-    'ChromeVersion',
-    'ChromeDriverError',
-    'VersionError',
-    'DownloadError',
-    'InstallationError'
+    'DriverVersionError',
+    'DriverDownloadError',
+    'DriverInstallationError'
 ] 

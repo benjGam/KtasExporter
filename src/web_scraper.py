@@ -5,8 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from typing import Optional, List
 import logging
+from kata import Kata
 from gvars import app_state
-from Kata import Kata
 
 logger = logging.getLogger(__name__)
 

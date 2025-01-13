@@ -5,7 +5,7 @@ import logging
 from typing import List
 import utils
 from file_management import FileManager
-from gvars import app_state
+from app_state import app_state
 import web_scraper
 from config import Configuration
 from path_validator import PathValidationError

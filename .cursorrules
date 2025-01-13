@@ -117,3 +117,40 @@ benchperf:
           ```
           ${conclusions}
           ```
+
+# Rule: prtemplate
+# Description: Template standard pour les Pull Requests
+# Usage: Automatically applied when creating a Pull Request with GitHub CLI
+prtemplate:
+  template: |
+    # ${pr_title}
+
+    ${pr_short_description}
+
+    ## Changes
+
+    ### ${change_category_1}
+    ${changes_list_1}
+
+    ### ${change_category_2}
+    ${changes_list_2}
+
+    ### Code Organization
+    - ${code_organization_changes}
+
+    ${testing_section}
+
+    ## Impact
+    ${impact_short_description}
+    1. ${impact_point_1}
+    2. ${impact_point_2}
+    3. ${impact_point_3}
+
+  variables:
+    testing_section:
+      optional: true
+      template: |
+        ## Testing
+        - ${test_point_1}
+        - ${test_point_2}
+        - ${test_point_3}

@@ -75,4 +75,4 @@ def main():
             gvars.web_driver.quit()
 
 if __name__ == "__main__":
-    main() 
+    main()

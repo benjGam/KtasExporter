@@ -102,4 +102,4 @@ def get_completed_katas(push_step: int) -> List[Kata]:
         if not load_more_solutions():
             break
             
-    return katas 
+    return katas

@@ -57,4 +57,4 @@ def read_kata_file(repo_path: str, file_name: str) -> None:
         open(file_path, 'a').close()
     except IOError as e:
         logger.error(f"Error reading file {file_path}: {str(e)}")
-        raise 
+        raise

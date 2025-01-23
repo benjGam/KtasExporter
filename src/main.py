@@ -3,10 +3,10 @@
 import os
 import logging
 from typing import List
-from system_utils import start_browser_session
+import utils
 from file_management import FileManager
-from app_state import app_state
-from web_scraper import get_completed_katas
+from gvars import app_state
+import web_scraper
 from config import Configuration
 from path_validator import PathValidationError
 from auth import (
@@ -51,7 +51,7 @@ def main():
         file_manager.read_katas()
         
         # Start browser session and authenticate
-        start_browser_session()
+        utils.start_browser_session()
         app_state.web_driver.get("https://www.codewars.com/users/sign_in")
         logger.info("Connecting to your Codewars account...")
         
@@ -62,7 +62,7 @@ def main():
         app_state.web_driver.get(f'https://www.codewars.com/users/{credentials.username}/completed_solutions')
         logger.info("Getting completed katas...")
         
-        katas = get_completed_katas(config.push_step)
+        katas = web_scraper.get_completed_katas(config.push_step)
         for kata in katas:
             save_and_commit_kata(kata, file_manager)
             

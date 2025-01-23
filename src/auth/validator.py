@@ -1,9 +1,9 @@
 import logging
 from typing import Optional, Tuple
 from selenium.common.exceptions import NoSuchElementException
-from .user_credentials import Credentials
+from .credentials import Credentials
 from .exceptions import AuthenticationError, ValidationError
-from .security_utils import SensitiveDataMasker
+from .security import SensitiveDataMasker
 
 logger = logging.getLogger(__name__)
 

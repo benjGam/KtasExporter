@@ -1,9 +1,9 @@
-"""Module for managing kata file operations."""
+"""File management module for kata export."""
 
 import os
-from typing import Set, Dict
 import logging
-from gvars import app_state
+from typing import List
+from app_state import app_state
 from path_validator import validate_path, validate_file_path, validate_git_repository, PathValidationError
 
 logger = logging.getLogger(__name__)

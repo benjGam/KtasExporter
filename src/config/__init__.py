@@ -1,5 +1,3 @@
-"""Configuration module for the application."""
-
-from config.config_manager import Configuration
+from .configuration import Configuration
 
 __all__ = ['Configuration'] 

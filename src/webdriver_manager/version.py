@@ -2,7 +2,7 @@ import re
 import subprocess
 import platform
 from typing import Optional
-from .exceptions import DriverVersionError
+from .exceptions import VersionError
 
 class ChromeVersion:
     """Handles Chrome version detection and comparison."""
@@ -33,7 +33,7 @@ class ChromeVersion:
                 except (subprocess.CalledProcessError, FileNotFoundError):
                     continue
                     
-            raise DriverVersionError("Failed to detect Chrome version: Chrome not found")
+            raise VersionError("Failed to detect Chrome version: Chrome not found")
             
         elif system == "darwin":
             try:
@@ -45,9 +45,9 @@ class ChromeVersion:
                 match = re.search(ChromeVersion.VERSION_PATTERN, version)
                 if match:
                     return match.group(0)
-                raise DriverVersionError("Invalid Chrome version format")
+                raise VersionError("Invalid Chrome version format")
             except Exception as e:
-                raise DriverVersionError(f"Failed to detect Chrome version: {str(e)}")
+                raise VersionError(f"Failed to detect Chrome version: {str(e)}")
                 
         elif system == "windows":
             try:
@@ -58,11 +58,11 @@ class ChromeVersion:
                 match = re.search(ChromeVersion.VERSION_PATTERN, version)
                 if match:
                     return match.group(0)
-                raise DriverVersionError("Invalid Chrome version format")
+                raise VersionError("Invalid Chrome version format")
             except Exception as e:
-                raise DriverVersionError(f"Failed to detect Chrome version: {str(e)}")
+                raise VersionError(f"Failed to detect Chrome version: {str(e)}")
                 
-        raise DriverVersionError(f"Unsupported operating system: {system}")
+        raise VersionError(f"Unsupported operating system: {system}")
     
     @staticmethod
     def get_major_version(version: str) -> int:
@@ -70,7 +70,8 @@ class ChromeVersion:
         try:
             return int(version.split('.')[0])
         except (IndexError, ValueError):
-            raise DriverVersionError(f"Invalid version format: {version}")
+            raise VersionError(f"Invalid version format: {version}")
+        return match.group(1)
     
     @staticmethod
     def is_compatible(chrome_version: str, driver_version: str) -> bool:
@@ -79,5 +80,5 @@ class ChromeVersion:
             chrome_major = ChromeVersion.get_major_version(chrome_version)
             driver_major = ChromeVersion.get_major_version(driver_version)
             return chrome_major == driver_major
-        except DriverVersionError:
+        except VersionError:
             return False 

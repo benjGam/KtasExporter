@@ -11,7 +11,7 @@ VENV_PYTHON="$SCRIPT_DIR/venv/bin/python3"
 if [ ! -f "$VENV_PYTHON" ]; then
     (sh "$SCRIPT_DIR/setup.sh")  # Execute in subshell
     printf "\nPress any key to continue..."
-    read -n 1 -s -r
+    command read -r || read -n 1 -s -r
     clear
 fi
 

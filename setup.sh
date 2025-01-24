@@ -32,7 +32,7 @@ add_alias_to_shell_config() {
 # Create virtual environment if it doesn't exist
 if [ ! -d "$FOLDER_PATH/venv" ]; then
     echo "Creating virtual environment..."
-    python -m venv "$FOLDER_PATH/venv/"
+    command python -m venv "$FOLDER_PATH/venv/" || python3 -m venv "$FOLDER_PATH/venv/"
 fi
 
 # Install dependencies
@@ -42,7 +42,7 @@ pip install -U selenium python-dotenv bs4 requests
 
 # Ask for alias creation
 printf "\nDo you want to add the 'ktasexport' alias to your shell config? [Y/n] "
-read -n 1 -s -r response
+command read -n 1 -s -r response || read -r response
 echo # New line after response
 
 if [ "$response" = "n" ] || [ "$response" = "N" ]; then
@@ -50,11 +50,8 @@ if [ "$response" = "n" ] || [ "$response" = "N" ]; then
 fi
 
 # Shell config files to process
-SHELL_CONFIGS=(
-    ".zshrc"
-    ".bashrc"
-    ".config/fish/config.fish"
-)
+
+SHELL_CONFIGS=(".zshrc" ".bashrc" ".config/fish/config.fish")
 
 # Try to add alias to all shell configs
 for config in "${SHELL_CONFIGS[@]}"; do
